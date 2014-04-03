@@ -1,0 +1,67 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+   <title>应用注册</title>
+   <meta name="viewport" content="width=device-width,initial-scale=1" />
+   <link href="../hxpublic_m/jquery.mobile-1.4.1.min.css" rel="Stylesheet" type="text/css" />
+   <link href="../hxpublic_m/hxcssstyle_m_shared.css" rel="Stylesheet" type="text/css" />
+   <script src="../hxpublic_m/jquery-2.1.0.min.js" type="text/javascript"></script>
+   <script src="../hxpublic_m/jquery.mobile-1.4.1.min.js" type="text/javascript"></script>
+   <script src="../hxmobilelocal/hxapp_mobilelocal.js" type="text/javascript"></script>
+   <script type="text/javascript">
+var dummy;
+$(function()
+{
+    $("#chkbxShowHideAdvanceSetting").bind("click", function(event) { document.getElementById("spnLoginServerAddressSettingArea").style.display = (event.target.checked ? "" : "none"); });
+    $("#btnRegisterAndLogin").bind("click", register_and_login);
+});
+
+function register_and_login()
+{
+    // a 合法性检查
+    if ($("#txtSystemName").val() == "")
+    {
+        document.getElementById("divHintForEmptySystemName").style.display = "";
+        document.getElementById("txtSystemName").focus();
+        return;
+    }
+    if ($("#txtServerAddress").val() == "")
+    {
+        document.getElementById("divHintForEmptyServerAddress").style.display = "";
+        document.getElementById("txtServerAddress").focus();
+        return;
+    }
+
+    // b register
+    var intNewSystemId = HXMobileJS.register_new_system($("#txtSystemName").val(), $("#txtServerAddress").val(), $("#txtLoginServerAddress").val(), true);
+
+    // c Login
+    $.mobile.changePage("hxapp_login.htm", { data: "system_id=" + intNewSystemId });
+}
+   </script>
+</head>
+<body>
+   <div data-role="page" id="hxapp_default_page">
+      <div data-role="header">
+         <h4>注册应用</h4>
+      </div>
+   <div data-role="content">
+       应用名称：<input type="text" id="txtSystemName" />
+       <div style="color:Red;display:none;margin-bottom:1em;" id="divHintForEmptySystemName">请输入应用名称！</div>
+       服务器地址：<input type="text" id="txtServerAddress" />
+       <div style="color:Red;display:none;margin-bottom:1em;" id="divHintForEmptyServerAddress">请输入服务器地址！</div>
+       <div style="position:relative;height:2em;">
+          <span>高级设置？</span>
+          <span style="position:absolute;top:3px;"><input type="checkbox" data-inline="true" style="width:20px;" id="chkbxShowHideAdvanceSetting" /></span>
+       </div>
+       <span id="spnLoginServerAddressSettingArea" style="display:none;margin-top:20px;">
+            登录验证服务器地址：<input type="text" id="txtLoginServerAddress" />
+       </span>
+       <div style="text-align:center;margin-top:20px;"><button style="width:100px;" data-inline="true" id="btnRegisterAndLogin">保存</button></div>
+   </div>
+   <div data-role="footer" data-position="fixed">
+       <h4>&copy;&nbsp;2000-2014 恒信软件</h4>
+   </div>
+   </div>
+</body>
+</html>

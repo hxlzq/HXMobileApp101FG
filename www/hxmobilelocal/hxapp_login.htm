@@ -1,0 +1,101 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+   <title>应用登录</title>
+   <meta name="viewport" content="width=device-width,initial-scale=1" />
+   <link href="../hxpublic_m/jquery.mobile-1.4.1.min.css" rel="Stylesheet" type="text/css" />
+   <link href="../hxpublic_m/hxcssstyle_m_shared.css" rel="Stylesheet" type="text/css" />
+    <script type="text/javascript">
+        var gstrWebRootPath = "/";  // 该变量定义用于hxwww601 webjs引擎, 本地mobile js不会实际使用
+        var mstrCurrentWebLanguageCulture = "zh-CN";  // 该变量定义用于hxwww601 webjs引擎, 本地mobile js不会实际使用
+    </script>
+    <script src="../hxpublic_m/jquery-2.1.0.min.js" type="text/javascript"></script>
+   <script src="../hxpublic_m/jquery.mobile-1.4.1.min.js" type="text/javascript"></script>
+   <script src="../hxmobilelocal/hxapp_mobilelocal.js" type="text/javascript"></script>
+   <script src="../hxpublic_v6/hxwww601core_min.js" type="text/javascript"></script>
+   <script type="text/javascript">
+var mstrSystemServerAddress;
+var mstrSystemServerHomePage;
+var mstrTokenForVerifyCode = "";
+$(function()
+{
+    var objUrlParameters = HXMobileJS.parseUrlParameters();
+    if (objUrlParameters == null) return;
+    var intSystemId = objUrlParameters["system_id"];
+    var objSystemSetting = HXMobileJS.get_registed_system_info(intSystemId);
+
+    var strSystemName = objSystemSetting.system_name;
+    mstrSystemServerAddress = objSystemSetting.server_address;
+    mstrSystemServerHomePage = objSystemSetting.server_homepage;
+
+    strLoginServerAddress = objSystemSetting.login_server_address;
+    
+    gstrWebRootPath = strLoginServerAddress; // 设置gstrWebRootPath全局变量值以便hxxmlservice.login能够指向正确的登录服务器
+
+    $("#lblSystemNameArea").text(strSystemName);
+
+    mstrTokenForVerifyCode = HXWebXmlService.LoginVerifyPictureAcquire(document.getElementById("imgVerifiyCode"));
+
+    $("#btLogin").bind("click", login_process);
+});
+
+function login_process()
+{
+    // a 合法性检查
+    if ($("#txtLoginUserCode").val() == "")
+    {
+        document.getElementById("divHintForEmptyUserCode").style.display = "";
+        document.getElementById("txtLoginUserCode").focus();
+        return;
+    }
+    
+    var strUserCode = document.getElementById("txtLoginUserCode").value;
+    var strPassword = document.getElementById("txtLoginPassword").value;
+    var strVerifyCode = document.getElementById("txtVerifyCode").value;
+
+    var gstrWebRootPath = strLoginServerAddress;
+    var objResult = HXWebXmlService.LoginByPasswordProcess(strUserCode, strPassword, strVerifyCode, { token_for_verify_code: mstrTokenForVerifyCode });
+
+    if ( objResult !=null )
+    {
+        var strNewAccessTokenCode = objResult.access_token_code;
+        var strNewCultureCode = objResult.culture_code;
+        // need_change_password: blnNeedChangePassword, change_password_hint_text: strChangePasswordHintText
+
+        HXMobileJS._Internal.set_global_config("last_access_user_code", strUserCode);
+        HXMobileJS._Internal.set_global_config("last_access_token_code", strNewAccessTokenCode);
+        HXMobileJS._Internal.set_global_config("chosen_language", strNewCultureCode);
+
+        HXWebNavigation.PostDataToWebPage(mstrSystemServerAddress + "hxpublic_v6/hxssoservice.aspx", "_self"
+                            , "login_user_code", strUserCode, "access_token_code", strNewAccessTokenCode
+                            , "target_web_page", mstrSystemServerHomePage);
+    }
+}
+   </script>
+</head>
+<body>
+   <div data-role="page" id="hxapp_default_page">
+      <div data-role="header" data-position="inline">
+         <h1><span id="lblSystemNameArea" style="margin-right:0.5em">应用</span>登录</h1>
+         <a data-icon="arrow-r" class="ui-btn-right">切换应用</a>
+      </div>
+   <div data-role="content">
+       登录名：<input type="text" id="txtLoginUserCode" />
+       <div style="color:Red;display:none;margin-bottom:1em;" id="divHintForEmptyUserCode">请输入登录名！</div>
+       登录密码：<input type="password" id="txtLoginPassword" />
+       </span>
+       <div style="position:relative;height:2em;">
+          <span>验证码：</span>
+          <span style="position:absolute;top:1em;left:0px;width:expression(this.parentNode.offsetWidth-70);width:calc(100% - 70px);"><input type="text" id="txtVerifyCode" data-inline="true" /></span>
+          <img id="imgVerifiyCode" src="" class="ui-corner-all ui-shadow-inset ui-input-text ui-page-theme-a"
+             style="position:absolute;top:1em;left:expression(this.parentNode.offsetWidth-60);left:calc(100% - 60px);width:60px;height:2.2em;" />
+       </div>
+
+       <div style="text-align:center;margin-top:4em;"><button style="width:100px;" data-inline="true" id="btLogin">登录</button></div>
+   </div>
+   <div data-role="footer" data-position="fixed">
+       <h4>&copy;&nbsp;2000-2014 恒信软件</h4>
+   </div>
+   </div>
+</body>
+</html>
