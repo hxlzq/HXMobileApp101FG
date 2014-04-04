@@ -5,8 +5,6 @@
     <description>恒信移动应用平台</description>
     <author href="http://www.trusthx.com">TrustHX Software</author>
 
-    <content src="hxmobilelocal/hxapp_default.htm" />
-
     <access origin="*" />
 
     <preference name="phonegap-version" value="3.3.0" />
@@ -21,7 +19,6 @@
     <preference name="detect-data-types" value="true" />
     <preference name="exit-on-suspend" value="false" />
     <preference name="disable-cursor" value="false" />
-    <preference name="android-minSdkVersion" value="7" />
     <preference name="android-installLocation" value="auto" />
     <preference name="AndroidPersistentFileLocation" value="Internal" />
     <preference name="iosPersistentFileLocation" value="Library" />
