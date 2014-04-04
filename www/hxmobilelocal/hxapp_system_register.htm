@@ -12,8 +12,8 @@
 var dummy;
 $(function()
 {
-    $("#chkbxShowHideAdvanceSetting").bind("click", function(event) { document.getElementById("spnLoginServerAddressSettingArea").style.display = (event.target.checked ? "" : "none"); });
-    $("#btnRegisterAndLogin").bind("click", register_and_login);
+    $("input#chkbxShowHideAdvanceSetting").bind("click", function(event) { document.getElementById("spnLoginServerAddressSettingArea").style.display = (event.target.checked ? "" : "none"); });
+    $("button#btnRegisterAndLogin").bind("click", register_and_login);
 });
 
 function register_and_login()
