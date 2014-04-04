@@ -32,11 +32,11 @@ $(function()
     
     gstrWebRootPath = strLoginServerAddress; // 设置gstrWebRootPath全局变量值以便hxxmlservice.login能够指向正确的登录服务器
 
-    $("#lblSystemNameArea").text(strSystemName);
+    $("span#lblSystemNameArea").text(strSystemName);
 
     mstrTokenForVerifyCode = HXWebXmlService.LoginVerifyPictureAcquire(document.getElementById("imgVerifiyCode"));
 
-    $("#btLogin").bind("click", login_process);
+    $("button#btLogin").bind("click", login_process);
 });
 
 function login_process()
@@ -83,12 +83,11 @@ function login_process()
        登录名：<input type="text" id="txtLoginUserCode" />
        <div style="color:Red;display:none;margin-bottom:1em;" id="divHintForEmptyUserCode">请输入登录名！</div>
        登录密码：<input type="password" id="txtLoginPassword" />
-       </span>
        <div style="position:relative;height:2em;">
           <span>验证码：</span>
-          <span style="position:absolute;top:1em;left:0px;width:expression(this.parentNode.offsetWidth-70);width:calc(100% - 70px);"><input type="text" id="txtVerifyCode" data-inline="true" /></span>
+          <span style="position:absolute;top:1em;left:0px;right:70px;"><input type="text" id="txtVerifyCode" data-inline="true" /></span>
           <img id="imgVerifiyCode" src="" class="ui-corner-all ui-shadow-inset ui-input-text ui-page-theme-a"
-             style="position:absolute;top:1em;left:expression(this.parentNode.offsetWidth-60);left:calc(100% - 60px);width:60px;height:2.2em;" />
+             style="position:absolute;top:1em;right:0px;width:60px;height:2.2em;" />
        </div>
 
        <div style="text-align:center;margin-top:4em;"><button style="width:100px;" data-inline="true" id="btLogin">登录</button></div>
