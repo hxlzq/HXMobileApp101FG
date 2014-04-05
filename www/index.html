@@ -43,7 +43,7 @@ $(function()
    else
    {
        // 2表示自动登录失败（令牌过期/错误），此时转入登录页
-       $.mobile.changePage("hxmobilelocal/hxapp_login.htm", { data: "system_id=" + intChosenSystemId });
+       window.open("hxmobilelocal/hxapp_login.htm?system_id=" + intChosenSystemId, "_self");
        return;
    }
 });
@@ -56,7 +56,7 @@ $(function()
       </div>
    <div data-role="content" style="text-align:center;">
       <p id="hint_area__processing">
-        <img src="hximages_m/hxpub_progress_circle_s20.gif" width="32px" height="32px" />
+        <img src="hximages_m/hxpub_progress_circle_s20.gif" width="32" height="32" />
        </p>
       <h3 id="hint_area__start_register_system" style="display:none;">
          还没有配置任何应用。<a href="hxmobilelocal/hxapp_system_register.htm?is_new=1&direct_login=1" rel="external" data-transition="flip" style="cursor:pointer;text-decoration:none;">开始配置</a>

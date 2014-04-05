@@ -38,7 +38,7 @@ function register_and_login()
     var intNewSystemId = HXMobileJS.register_new_system($("#txtSystemName").val(), $("#txtServerAddress").val(), $("#txtLoginServerAddress").val(), true);
 
     // c Login
-    $.mobile.changePage("hxapp_login.htm", { data: "system_id=" + intNewSystemId });
+    window.open("hxapp_login.htm?system_id=" + intNewSystemId, "_self");
 }
    </script>
 </head>
