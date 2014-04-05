@@ -1,9 +1,10 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-    <title>应用登录</title>
     <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta http-equiv="expires" content="Sunday 26 October 2008 01:00 GMT" />
     <meta http-equiv ="Pragma" content="no-cache" />
+    <title>应用登录</title>
     <link href="../hxpublic_m/jquery.mobile-1.4.1.min.css" rel="Stylesheet" type="text/css" />
     <link href="../hxpublic_m/hxcssstyle_m_shared.css" rel="Stylesheet" type="text/css" />
 <script type="text/javascript">
@@ -90,7 +91,10 @@ function login_process() {
              style="position:absolute;top:1em;right:0px;width:60px;height:2.2em;" />
        </div>
 
-       <div style="text-align:center;margin-top:4em;"><button style="width:100px;" data-inline="true" id="btnLogin">登录</button></div>
+       <div style="text-align:center;margin-top:4em;">
+           <button style="width:100px;" data-inline="true" id="btnLogin">登录</button>
+           <button style="width:100px;" data-inline="true" onclick="alert('hello');alert(document.body.innerHTML)">测试</button>
+       </div>
    </div>
    <div data-role="footer" data-position="fixed">
        <h4>&copy;&nbsp;2000-2014 恒信软件</h4>
