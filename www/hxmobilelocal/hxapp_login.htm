@@ -41,8 +41,9 @@ $(function () {
 
 
 function login_process() {
+    alert("debug")
     // a 合法性检查
-    if ($("#txtLoginUserCode").val() == "") {
+    if ($("input#txtLoginUserCode").val() == "") {
         document.getElementById("divHintForEmptyUserCode").style.display = "";
         document.getElementById("txtLoginUserCode").focus();
         return;
