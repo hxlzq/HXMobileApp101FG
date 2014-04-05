@@ -19,6 +19,7 @@ var mstrSystemServerAddress;
 var mstrSystemServerHomePage;
 var mstrTokenForVerifyCode = "";
 $(function () {
+    alert("debug onload");
     var objUrlParameters = HXMobileJS.parseUrlParameters();
     if (objUrlParameters == null) return;
     var intSystemId = objUrlParameters["system_id"];
@@ -41,7 +42,7 @@ $(function () {
 
 
 function login_process() {
-    alert("debug")
+    alert("debug login")
     // a 合法性检查
     if ($("input#txtLoginUserCode").val() == "") {
         document.getElementById("divHintForEmptyUserCode").style.display = "";
