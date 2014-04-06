@@ -7,23 +7,108 @@
     <title>应用注册</title>
     <link href="../hxpublic_m/jquery.mobile-1.4.1.min.css" rel="Stylesheet" type="text/css" />
     <link href="../hxpublic_m/hxcssstyle_m_shared.css" rel="Stylesheet" type="text/css" />
+    <script type="text/javascript">
+        var gstrWebRootPath = "/";  // 该变量定义用于hxwww601 webjs引擎, 本地mobile js不会实际使用
+        var mstrCurrentWebLanguageCulture = "zh-CN";  // 该变量定义用于hxwww601 webjs引擎, 本地mobile js不会实际使用
+    </script>
     <script src="../hxpublic_m/jquery-2.1.0.min.js" type="text/javascript"></script>
     <script src="../hxpublic_m/jquery.mobile-1.4.1.min.js" type="text/javascript"></script>
     <script src="../hxmobilelocal/hxapp_mobilelocal.js" type="text/javascript"></script>
+    <script src="../hxpublic_v6/hxwww601core_min.js" type="text/javascript"></script>
 <script type="text/javascript">
-    var dummy;
-    $(function () {
-        $("input#chkbxShowHideAdvanceSetting").bind("click", function (event) { document.getElementById("spnLoginServerAddressSettingArea").style.display = (event.target.checked ? "" : "none"); });
-        $("button#btnRegisterAndLogin").bind("click", register_and_login);
-    });
+var dummy;
+$(function () {
+    // 读取已登记的系统列表内容并显示
+    var arrRegistedSystemsList = HXMobileJS.get_registed_system_list();
+    if ( arrRegistedSystemsList == null)
+    {
+        //未注册任何应用，转到应用添加页面（容错目的）
+        window.open("hxapp_system_register.htm?direct_login=1", "_self");
+        return;
+    }
+
+    var strSystemId, strSystemName;
+    var objTempLineElement;
+
+    for( var i=0; i< arrRegistedSystemsList.length; i++)
+    {
+        strSystemId = arrRegistedSystemsList[i].system_id;
+        strSystemName = arrRegistedSystemsList[i].system_name;
+
+        objTempLineElement = build_li_html_element_of_system(strSystemId, strSystemName, (i==0), (i==arrRegistedSystemsList.length-1));
+        $("#ulSystemListContainer").append(objTempLineElement);
+    }
+});
+
+function build_li_html_element_of_system(strSystemId, strSystemName, blnIsFirstLine, blnIsLastLine)
+{
+    var sb_html = new HXWebStringBuilder();
+    sb_html.append("<li id=\"hxli_line_container\"");
+    sb_html.append(" class=\"ui-li-static ui-body-inherit");
+    if (blnIsFirstLine) sb_html.append(" ui-first-child");
+    if (blnIsLastLine) sb_html.append(" ui-last-child");
+    sb_html.append("\"");
+    sb_html.append(" hx_system_id=\"" + strSystemId + "\">");
+    sb_html.append("<div class=\"ui-grid-a\">");
+    sb_html.append("<div class=\"ui-block-a\" id=\"divSystemName\" style=\"cursor:pointer\" id=\"divSystemNameArea\" onclick=\"visit_system(event)\">");
+    sb_html.append(HXWebJS.Core.MarkXMLSpecialChars(strSystemName));
+    sb_html.append("</div>");
+    sb_html.append("<div class=\"ui-block-b\" style=\"text-align:right;\">");
+    sb_html.append("<a id=\"btnLineDelete\" onclick=\"remove_registed_system(event)\">删除</a>");
+    sb_html.append("<a id=\"btnLineEdit\" style=\"margin-left:20px;\" onclick=\"edit_registed_system_info(event)\">设置</a>");
+    sb_html.append("</div></div></li>");
+        
+    return HXWebJS.DOM.CreateElement(sb_html.toString());
+}
+
+function edit_registed_system_info(e)
+{
+    var objElement = e.target;
+    var objLine = objElement.parentNode.parentNode.parentNode;
+    var strSystemId = $(objLine).attr("hx_system_id");
+    window.open("hxapp_system_config.htm?system_id=" + strSystemId);
+}
+
+function remove_registed_system(e)
+{
+    var objElement = e.target;
+    var objLine = objElement.parentNode.parentNode.parentNode;
+    var strSystemId = $(objLine).attr("hx_system_id");
+    var strSystemName = $("#divSystemName", objLine).text();
+
+    if (confirm("你确定要移除指定应用[" + strSystemName + "]吗？") == false) return;
+
+    if (HXMobileJS.remove_system(strSystemId) != null)  $(objLine).remove();
+}
+
+function visit_system(e)
+{
+    var objElement = e.target;
+    var objLine = objElement.parentNode.parentNode;
+    var intSystemId = $(objLine).attr("hx_system_id");
+
+    HXMobileJS.auto_login_process(intSystemId, "hint_area__connect_to_server_fail");
+}
+
 </script>
 </head>
 <body>
     <div data-role="page" id="hxapp_default_page">
         <div data-role="header" data-position="inline">
             <h1>应用列表</h1>
-            <a data-icon="plus" data-iconpos="notext" class="ui-btn-right" href="hxapp_system_register.htm?is_new=1&direct_login=1" rel="external">添加</a>
+            <a data-icon="plus" data-iconpos="notext" class="ui-btn-right" href="hxapp_system_register.htm?direct_login=0" rel="external">添加</a>
         </div>
-    </div>
+        <ul data-role="listview" id="ulSystemListContainer">
+        </ul>
+        <div data-role="none" id="hint_area__connect_to_server_fail" 
+             style="position: absolute; visibility:hidden; left: 60px; right: 60px; height: 1.6em; bottom: 3.8em; padding: 2px 2px 2px 2px; 
+                                    background-color: #808080; color: white; font-size: small; text-align: center;">
+            <span id="lblSystemNameForConnectionFailHint" style="font-weight:bold;">系统</span>网络连接不可用，请稍后重试。
+        </div>
+            <div data-role="footer" data-position="fixed">
+                <h4>&copy;&nbsp;2000-2014 恒信软件</h4>
+            </div>
+</div>
+
 </body>
 </html>

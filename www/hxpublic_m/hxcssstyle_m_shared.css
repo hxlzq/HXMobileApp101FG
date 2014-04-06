@@ -1,2 +1,4 @@
-﻿.hxicon_document { background:url(../hximages_m/hxpub_bg_icons.png) no-repeat -180px -80px;width:12px;height:14px;}
-a {text-decoration:none;}
+﻿a {text-decoration:none;cursor:pointer;}
+body {font-family:微软雅黑,Arial,sans-serif;}
+
+

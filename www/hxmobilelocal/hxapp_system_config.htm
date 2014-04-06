@@ -12,20 +12,23 @@
    <script src="../hxmobilelocal/hxapp_mobilelocal.js" type="text/javascript"></script>
    <script type="text/javascript">
 var dummy;
-var mblnDirectLogin = true;
+var mintSystemId;
 $(function()
 {
     var objUrlParameters = HXMobileJS.parseUrlParameters();
-    if (objUrlParameters != null) {
-        var strTemp = objUrlParameters["direct_login"];
-        if (strTemp != null && strTemp != "" && strTemp == "0") mblnDirectLogin = false;
-    }
+    if (objUrlParameters == null) return;
+    mintSystemId = objUrlParameters["system_id"];
+    var objSystemSetting = HXMobileJS.get_registed_system_info(mintSystemId);
 
-    $("input#chkbxShowHideAdvanceSetting").bind("click", function(event) { document.getElementById("spnLoginServerAddressSettingArea").style.display = (event.target.checked ? "" : "none"); });
-    $("button#btnRegisterAndLogin").bind("click", register_and_login);
+    $("#txtSystemName").val(objSystemSetting.system_name);
+    $("#txtServerAddress").val(objSystemSetting.server_address);
+    $("#txtLoginServerAddress").val(objSystemSetting.login_server_address);
+
+    $("input#chkbxShowHideAdvanceSetting").bind("click", function (event) { document.getElementById("spnLoginServerAddressSettingArea").style.display = (event.target.checked ? "" : "none"); });
+    $("button#btnRegisterAndLogin").bind("click", save_and_return);
 });
 
-function register_and_login()
+function save_and_return()
 {
     // a 合法性检查
     if ($("#txtSystemName").val() == "")
@@ -41,14 +44,11 @@ function register_and_login()
         return;
     }
 
-    // b register
-    var intNewSystemId = HXMobileJS.register_new_system($("#txtSystemName").val(), $("#txtServerAddress").val(), $("#txtLoginServerAddress").val(), true);
+    // b save
+    HXMobileJS.update_system_config_info(mintSystemId, $("#txtSystemName").val(), $("#txtServerAddress").val(), $("#txtLoginServerAddress").val());
 
-    // c Login
-    if (mblnDirectLogin)
-        window.open("hxapp_login.htm?system_id=" + intNewSystemId, "_self");
-    else
-        window.open("hxapp_system_list.htm", "_self");
+    // c return to list
+    window.open("hxapp_system_list.htm", "_self");
 }
    </script>
 </head>

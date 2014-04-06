@@ -10,19 +10,72 @@ HXMobileJS.get_current_chosen_system_id = function()
 HXMobileJS.get_curren_chosen_language = function()
 {
     var strChosenLanguage = "zh-cn";
-    var strTemp = HXMobileJS.get_global_config("chosen_language");
+    var strTemp = HXMobileJS._Internal.get_global_config("chosen_language");
     if (strTemp != null && strTemp != "") strChosenLanguage = strTemp;
     return strChosenLanguage;
 }
 
-HXMobileJS.register_new_system = function(strSystemName, strServerAddress, strLoginServerAddress, blnSetAsChosenSystem)
+HXMobileJS.register_new_system = function (strSystemName, strServerAddress, strLoginServerAddress, blnSetAsChosenSystem)
 {
     var intNewSystemId = HXMobileJS._Internal.get_new_system_id();
     HXMobileJS._Internal.insert_new_system(intNewSystemId, strSystemName, strServerAddress, strLoginServerAddress);
-
     if (blnSetAsChosenSystem) HXMobileJS._Internal.set_global_config("chosen_system_id", intNewSystemId);
-    
     return intNewSystemId;
+}
+
+
+HXMobileJS.update_system_config_info = function(intSystemId, strSystemName, strServerAddress, strLoginServerAddress)
+{
+    if (window.localStorage == null) return null;
+    var strTemp = window.localStorage.getItem("hxmobile_system_list");
+    if (strTemp == null || strTemp == "") return null;
+
+    var objRegistedSystemList = $.parseJSON(strTemp);
+    var objSystemConfigInfo = null, objTemp;
+    for (var i = 0; i < objRegistedSystemList.length; i++) {
+        objTemp = objRegistedSystemList[i];
+        if (objTemp.system_id == intSystemId) { objSystemConfigInfo = objTemp; break; }
+    }
+
+    if (objSystemConfigInfo == null) return;
+
+    if (strServerAddress == null || strServerAddress == "") return null;
+
+    // server address 和login server address 规范化
+    strServerAddress = HXMobileJS._Internal._format_full_server_address(strServerAddress);
+
+    if (strLoginServerAddress == null || strLoginServerAddress == "")
+        strLoginServerAddress = strServerAddress;
+    else
+        strLoginServerAddress = HXMobileJS._Internal._format_full_server_address(strLoginServerAddress);
+
+    objSystemConfigInfo.system_name = strSystemName;
+    objSystemConfigInfo.server_address = strServerAddress;
+    objSystemConfigInfo.login_server_address = strLoginServerAddress;
+
+    window.localStorage.setItem("hxmobile_system_list", JSON.stringify(objRegistedSystemList));
+}
+
+HXMobileJS.remove_system = function(intSystemId)
+{
+    if (window.localStorage == null) return null;
+    var strTemp = window.localStorage.getItem("hxmobile_system_list");
+    if (strTemp == null || strTemp == "") return null;
+
+    var objRegistedSystemList = $.parseJSON(strTemp);
+    var objSystemConfigInfo = null, objTemp;
+    for (var i = 0; i < objRegistedSystemList.length; i++) {
+        objTemp = objRegistedSystemList[i];
+        if (objTemp.system_id == intSystemId) { objSystemConfigInfo = objTemp; break; }
+    }
+
+    if (objSystemConfigInfo == null) return null;
+
+    objRegistedSystemList.splice(i, 1);
+
+    window.localStorage.setItem("hxmobile_system_list", JSON.stringify(objRegistedSystemList));
+
+    return objSystemConfigInfo;
 }
 
 HXMobileJS.get_registed_system_info = function(intSystemId)
@@ -37,6 +90,59 @@ HXMobileJS.get_registed_system_info = function(intSystemId)
     {
         objTemp = objRegistedSystemList[i];
         if (objTemp.system_id == intSystemId) return objTemp;
+    }
+}
+
+HXMobileJS.get_registed_system_list = function()
+{
+    if (window.localStorage == null) return null;
+    var strTemp = window.localStorage.getItem("hxmobile_system_list");
+    if (strTemp == null || strTemp == "") return null;
+
+    return $.parseJSON(strTemp);
+}
+
+HXMobileJS.auto_login_process = function(intSystemId, strHtmlIdForConnectionFailHintArea)
+{
+    var objSystemSetting = HXMobileJS.get_registed_system_info(intSystemId);
+    if (objSystemSetting == null) return;
+
+    // 设置登录服务器地址，以便AJAX登录处理
+    gstrWebRootPath = objSystemSetting.login_server_address;
+
+    // is online调用，如果网络未连接，显示网络未连接消息（消息3秒后自动隐藏）
+    if (!HXWebXmlService.IsOnline()) {
+        document.getElementById(strHtmlIdForConnectionFailHintArea).style.visibility = "visible";
+        window.setTimeout(function () { document.getElementById(strHtmlIdForConnectionFailHintArea).style.visibility = "hidden"; }, 3000);
+        return;
+    }
+
+    var strUserCode = HXMobileJS._Internal.get_global_config("last_access_user_code");
+    var strAccessTokenCode = HXMobileJS._Internal.get_global_config("last_access_token_code");
+
+    if (strUserCode == null || strUserCode == "" || strAccessTokenCode == null || strAccessTokenCode == "") {
+        // 自动令牌登录信息不足，转入登录页面
+        window.open("/hxmobilelocal/hxapp_login.htm?system_id=" + intSystemId, "_self");
+        return;
+    }
+
+    var objResult = HXWebXmlService.LoginByTokenProcess(strUserCode, strAccessTokenCode);
+
+    if (objResult != null) {
+        var strNewAccessTokenCode = objResult.access_token_code;
+        var strNewCultureCode = objResult.culture_code;
+
+        HXMobileJS._Internal.set_global_config("last_access_user_code", strUserCode);
+        HXMobileJS._Internal.set_global_config("last_access_token_code", strNewAccessTokenCode);
+        HXMobileJS._Internal.set_global_config("chosen_language", strNewCultureCode);
+
+        HXWebNavigation.PostDataToWebPage(objSystemSetting.server_address + "hxpublic_v6/hxssoservice.aspx", "_self"
+                            , "login_user_code", strUserCode, "access_token_code", strNewAccessTokenCode
+                            , "target_web_page", "");
+    }
+    else {
+        // 到登录页
+        window.open("/hxmobilelocal/hxapp_login.htm?system_id=" + intSystemId, "_self");
     }
 }
 
@@ -61,16 +167,7 @@ HXMobileJS.parseUrlParameters = function()
     return objUrlParameters;
 }
 
-HXMobileJS.try_to_auto_login = function(intSystemId)
-{
-    // 1 如果登录服务器地址被设置，则使用该值，否则使用服务器地址作为登录服务器地址
-    // 2 登录服务器地址加上 /hxpublic_v6/hxxmlservice_v6.aspx作为AJAX访问地址
-    // 3 构造
-}
 
-HXMobileJS.goto_system_homepage = function(intSystemId)
-{
-}
 
 HXMobileJS._Internal = {};
 HXMobileJS._Internal.get_global_config = function(strConfigCode)
@@ -114,15 +211,14 @@ HXMobileJS._Internal.get_new_system_id = function()
 
     return intTempMaxUsedId+1;
 }
+
+
 HXMobileJS._Internal.insert_new_system = function (intNewSystemId, strSystemName, strServerAddress, strLoginServerAddress, strServerHomePage)
 {
     if (window.localStorage == null) return null;
 
     if (strServerAddress == null || strServerAddress == "") return null;
-
     if (strServerHomePage == null) strServerHomePage = "";
-
-
     // server address 和login server address 规范化
     strServerAddress = HXMobileJS._Internal._format_full_server_address(strServerAddress);
 
@@ -130,6 +226,13 @@ HXMobileJS._Internal.insert_new_system = function (intNewSystemId, strSystemName
         strLoginServerAddress = strServerAddress;
     else
         strLoginServerAddress = HXMobileJS._Internal._format_full_server_address(strLoginServerAddress);
+
+    var objSystemConfigInfo = { system_id: intNewSystemId, system_name: strSystemName
+                                , server_address: strServerAddress, server_address_2: null
+                                , server_homepage: strServerHomePage
+                                , login_server_address: strLoginServerAddress
+                                , login_user: null, login_token: null, login_token_create_time: null
+    };
         
     var strRegistedSystemJSONList = window.localStorage.getItem("hxmobile_system_list");
 
@@ -141,17 +244,11 @@ HXMobileJS._Internal.insert_new_system = function (intNewSystemId, strSystemName
     else
         objRegistedSystemList = $.parseJSON(strRegistedSystemJSONList);
 
-    var objSystemConfigInfo = { system_id: intNewSystemId, system_name: strSystemName
-                                , server_address: strServerAddress, server_address_2: null
-                                , server_homepage: strServerHomePage
-                                , login_server_address: strLoginServerAddress
-                                , login_user: null, login_token: null, login_token_create_time: null
-    };
-
     objRegistedSystemList.push(objSystemConfigInfo);
 
     window.localStorage.setItem("hxmobile_system_list", JSON.stringify(objRegistedSystemList));
 }
+
 
 
 HXMobileJS._Internal._format_full_server_address = function (strServerAddress)

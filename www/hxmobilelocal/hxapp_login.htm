@@ -20,7 +20,6 @@ var mstrSystemServerAddress;
 var mstrSystemServerHomePage;
 var mstrTokenForVerifyCode = "";
 $(function () {
-    alert("debug onload");
     var objUrlParameters = HXMobileJS.parseUrlParameters();
     if (objUrlParameters == null) return;
     var intSystemId = objUrlParameters["system_id"];
@@ -36,14 +35,14 @@ $(function () {
 
     $("span#lblSystemNameArea").text(strSystemName);
 
+    mstrTokenForVerifyCode = HXWebXmlService.LoginVerifyPictureAcquire(document.getElementById("imgVerifiyCode"));
+
     $("button#btnLogin").bind("click", login_process);
 
-    mstrTokenForVerifyCode = HXWebXmlService.LoginVerifyPictureAcquire(document.getElementById("imgVerifiyCode"));
 });
 
 
 function login_process() {
-    alert("debug login")
     // a 合法性检查
     if ($("input#txtLoginUserCode").val() == "") {
         document.getElementById("divHintForEmptyUserCode").style.display = "";
@@ -93,7 +92,6 @@ function login_process() {
 
        <div style="text-align:center;margin-top:4em;">
            <button style="width:100px;" data-inline="true" id="btnLogin">登录</button>
-           <button style="width:100px;" data-inline="true" onclick="alert('hello');alert(document.body.innerHTML)">测试</button>
        </div>
    </div>
    <div data-role="footer" data-position="fixed">
