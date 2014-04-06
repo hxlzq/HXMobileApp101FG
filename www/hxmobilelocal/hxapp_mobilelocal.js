@@ -124,7 +124,7 @@ HXMobileJS.auto_login_process = function(intSystemId, strHtmlIdForConnectionFail
 
     if (strUserCode == null || strUserCode == "" || strAccessTokenCode == null || strAccessTokenCode == "") {
         // 自动令牌登录信息不足，转入登录页面
-        window.open( (blnCallFromRootPath ? "" : "../" + "hxmobilelocal/hxapp_login.htm?system_id=" + intSystemId, "_self");
+        window.open( (blnCallFromRootPath ? "" : "../") + "hxmobilelocal/hxapp_login.htm?system_id=" + intSystemId, "_self");
         return;
     }
 
@@ -144,7 +144,7 @@ HXMobileJS.auto_login_process = function(intSystemId, strHtmlIdForConnectionFail
     }
     else {
         // 到登录页
-        window.open(blnCallFromRootPath ? "" : "../" + "hxmobilelocal/hxapp_login.htm?system_id=" + intSystemId, "_self");
+        window.open( (blnCallFromRootPath ? "" : "../") + "hxmobilelocal/hxapp_login.htm?system_id=" + intSystemId, "_self");
     }
 }
 
