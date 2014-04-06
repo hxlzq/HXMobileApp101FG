@@ -65,16 +65,14 @@ function build_li_html_element_of_system(strSystemId, strSystemName, blnIsFirstL
 
 function edit_registed_system_info(e)
 {
-    var objElement = e.target;
-    var objLine = objElement.parentNode.parentNode.parentNode;
+    var objLine = get_line_element_of_trigger(e.target);
     var strSystemId = $(objLine).attr("hx_system_id");
     window.open("hxapp_system_config.htm?system_id=" + strSystemId);
 }
 
 function remove_registed_system(e)
 {
-    var objElement = e.target;
-    var objLine = objElement.parentNode.parentNode.parentNode;
+    var objLine = get_line_element_of_trigger(e.target);
     var strSystemId = $(objLine).attr("hx_system_id");
     var strSystemName = $("#divSystemName", objLine).text();
 
@@ -85,13 +83,22 @@ function remove_registed_system(e)
 
 function visit_system(e)
 {
-    var objElement = e.target;
-    var objLine = objElement.parentNode.parentNode;
+    var objLine = get_line_element_of_trigger(e.target);
     var intSystemId = $(objLine).attr("hx_system_id");
-
     HXMobileJS.auto_login_process(intSystemId, "hint_area__connect_to_server_fail");
 }
 
+function get_line_element_of_trigger(objSrcElement) {
+    var objTempElement = objSrcElement;
+    while (objTempElement != null) {
+        if (objTempElement.tagName.toUpperCase() == "LI") {
+            return objTempElement;
+        }
+        objTempElement = objTempElement.parentNode;
+    }
+
+    return null; 
+}
 </script>
 </head>
 <body>
