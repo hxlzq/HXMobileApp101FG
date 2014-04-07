@@ -138,9 +138,12 @@ HXMobileJS.auto_login_process = function(intSystemId, strHtmlIdForConnectionFail
         HXMobileJS._Internal.set_global_config("last_access_token_code", strNewAccessTokenCode);
         HXMobileJS._Internal.set_global_config("chosen_language", strNewCultureCode);
 
-        HXWebNavigation.PostDataToWebPage(objSystemSetting.server_address + "hxpublic_v6/hxssoservice.aspx", "_self"
-                            , "login_user_code", strUserCode, "access_token_code", strNewAccessTokenCode
-                            , "target_web_page", "");
+        var strFullUrl = objSystemSetting.server_address + "hxpublic_v6/hxssoservice.aspx?login_user_code=" + strUserCode + "access_token_code=" + strNewAccessTokenCode;
+
+        window.open((blnCallFromRootPath ? "" : "../") + "hxmobilelocal/hxapp_system_container.htm?system_full_url=" + escape(strFullUrl));
+        //HXWebNavigation.PostDataToWebPage(objSystemSetting.server_address + "hxpublic_v6/hxssoservice.aspx", "_self"
+        //                    , "login_user_code", strUserCode, "access_token_code", strNewAccessTokenCode
+        //                    , "target_web_page", "");
     }
     else {
         // 到登录页
