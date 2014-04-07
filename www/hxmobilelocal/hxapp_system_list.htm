@@ -85,7 +85,14 @@ function visit_system(e)
 {
     var objLine = get_line_element_of_trigger(e.target);
     var intSystemId = $(objLine).attr("hx_system_id");
-    HXMobileJS.auto_login_process(intSystemId, "hint_area__connect_to_server_fail");
+
+    document.getElementById("hxProgressHintIcon").style.display = "";
+    window.setTimeout(function()
+    {
+        HXMobileJS.auto_login_process(intSystemId, "hint_area__connect_to_server_fail");
+        document.getElementById("hxProgressHintIcon").style.display = "none";
+
+    }, 200)
 }
 
 function get_line_element_of_trigger(objSrcElement) {
@@ -115,6 +122,7 @@ function get_line_element_of_trigger(objSrcElement) {
             <span id="lblSystemNameForConnectionFailHint" style="font-weight:bold;">系统</span>网络连接不可用，请稍后重试。
         </div>
             <div data-role="footer" data-position="fixed">
+                <img src="../hximages_v6/hxpub_waiting_hint_sun_16.gif" data-role="none"  class="ui-btn-left" id="hxProgressHintIcon" style="display:none;margin-top:0.6em;" />
                 <h4>&copy;&nbsp;2000-2014 恒信软件</h4>
             </div>
 </div>
