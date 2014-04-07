@@ -19,6 +19,7 @@ var mstrCurrentWebLanguageCulture = "zh-CN";  // 该变量定义用于hxwww601 w
 var mstrSystemServerAddress;
 var mstrSystemServerHomePage;
 var mstrTokenForVerifyCode = "";
+var mblnSystemOpenedInContainer = false;
 $(function () {
     var objUrlParameters = HXMobileJS.parseUrlParameters();
     if (objUrlParameters == null) return;
@@ -28,6 +29,7 @@ $(function () {
     var strSystemName = objSystemSetting.system_name;
     mstrSystemServerAddress = objSystemSetting.server_address;
     mstrSystemServerHomePage = objSystemSetting.server_homepage;
+    mblnSystemOpenedInContainer = objSystemSetting.opened_in_container;
 
     strLoginServerAddress = objSystemSetting.login_server_address;
 
@@ -66,9 +68,11 @@ function login_process() {
         HXMobileJS._Internal.set_global_config("last_access_token_code", strNewAccessTokenCode);
         HXMobileJS._Internal.set_global_config("chosen_language", strNewCultureCode);
 
-        HXWebNavigation.PostDataToWebPage(mstrSystemServerAddress + "hxpublic_v6/hxssoservice.aspx", "_self"
-                            , "login_user_code", strUserCode, "access_token_code", strNewAccessTokenCode
-                            , "target_web_page", mstrSystemServerHomePage);
+        HXMobileJS.navigate_to_system_homepage(mstrSystemServerAddress, strUserCode, strNewAccessTokenCode, mstrSystemServerHomePage
+                                , mblnSystemOpenedInContainer, false);
+        //HXWebNavigation.PostDataToWebPage(mstrSystemServerAddress + "hxpublic_v6/hxssoservice.aspx", "_self"
+        //                    , "login_user_code", strUserCode, "access_token_code", strNewAccessTokenCode
+        //                    , "target_web_page", mstrSystemServerHomePage);
     }
 }
 </script>

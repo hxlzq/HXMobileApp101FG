@@ -138,16 +138,31 @@ HXMobileJS.auto_login_process = function(intSystemId, strHtmlIdForConnectionFail
         HXMobileJS._Internal.set_global_config("last_access_token_code", strNewAccessTokenCode);
         HXMobileJS._Internal.set_global_config("chosen_language", strNewCultureCode);
 
-        var strFullUrl = objSystemSetting.server_address + "hxpublic_v6/hxssoservice.aspx?login_user_code=" + strUserCode + "access_token_code=" + strNewAccessTokenCode;
-
-        window.open((blnCallFromRootPath ? "" : "../") + "hxmobilelocal/hxapp_system_container.htm?system_full_url=" + escape(strFullUrl));
-        //HXWebNavigation.PostDataToWebPage(objSystemSetting.server_address + "hxpublic_v6/hxssoservice.aspx", "_self"
-        //                    , "login_user_code", strUserCode, "access_token_code", strNewAccessTokenCode
-        //                    , "target_web_page", "");
+        HXMobileJS.navigate_to_system_homepage(objSystemSetting.server_address, strUserCode, strNewAccessTokenCode, ""
+                            , objSystemSetting.opened_in_container, blnCallFromRootPath);
     }
     else {
         // 到登录页
         window.open( (blnCallFromRootPath ? "" : "../") + "hxmobilelocal/hxapp_login.htm?system_id=" + intSystemId, "_self");
+    }
+}
+
+HXMobileJS.navigate_to_system_homepage = function (strServerAddress, strUserCode, strAccessTokenCode, strTargetHomePage, blnOpenInContainer, blnCallFromRootPath)
+{
+    blnOpenInContainer = true; // 测试目的
+    if ( blnOpenInContainer == true)
+    {
+        var strFullUrl = strServerAddress + "hxpublic_v6/hxssoservice.aspx?login_user_code=" + strUserCode 
+                + "&access_token_code=" + strAccessTokenCode + "&target_web_page=" + strTargetHomePage;
+
+        window.open((blnCallFromRootPath ? "" : "../") + "hxmobilelocal/hxapp_system_container.htm?system_full_url=" + escape(strFullUrl));
+
+    }
+    else
+    {
+        HXWebNavigation.PostDataToWebPage(strServerAddress + "hxpublic_v6/hxssoservice.aspx", "_self"
+                            , "login_user_code", strUserCode, "access_token_code", strAccessTokenCode
+                            , "target_web_page", strTargetHomePage);
     }
 }
 
