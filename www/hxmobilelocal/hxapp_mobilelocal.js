@@ -149,7 +149,8 @@ HXMobileJS.auto_login_process = function(intSystemId, strHtmlIdForConnectionFail
 
 HXMobileJS.navigate_to_system_homepage = function (strServerAddress, strUserCode, strAccessTokenCode, strTargetHomePage, blnOpenInContainer, blnCallFromRootPath)
 {
-    blnOpenInContainer = true; // 测试目的
+    blnOpenInContainer = false; // 经测试，phonegap下本地页面嵌套远程页面时对远程页面的设备调用问题较多，所以此处总是使用直接远程页面访问机制
+
     if ( blnOpenInContainer == true)
     {
         var strFullUrl = strServerAddress + "hxpublic_v6/hxssoservice.aspx?login_user_code=" + strUserCode 
