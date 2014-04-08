@@ -124,6 +124,7 @@ HXMobileJS.auto_login_process = function (intSystemId, fnCallbackWhenOffLine, bl
             var strNewAccessTokenCode = objResult.access_token_code;
             var strNewCultureCode = objResult.culture_code;
 
+            HXMobileJS._Internal.set_global_config("chosen_system_id", intSystemId);
             HXMobileJS._Internal.set_global_config("last_access_user_code", strUserCode);
             HXMobileJS._Internal.set_global_config("last_access_token_code", strNewAccessTokenCode);
             HXMobileJS._Internal.set_global_config("chosen_language", strNewCultureCode);

@@ -81,23 +81,19 @@ function remove_registed_system(e)
     if (HXMobileJS.remove_system(strSystemId) != null)  $(objLine).remove();
 }
 
-function visit_system(e)
-{
+function visit_system(e) {
     var objLine = get_line_element_of_trigger(e.target);
     var intSystemId = $(objLine).attr("hx_system_id");
 
     document.getElementById("hxProgressHintIcon").style.display = "";
-    window.setTimeout(function()
-    {
-        var fnCallbackWhenOffLine = function()
-        {
-            document.getElementById("hint_area__connect_to_server_fail").style.visibility = "visible";
-            window.setTimeout(function () { document.getElementById("hint_area__connect_to_server_fail").style.visibility = "hidden"; }, 3000);
-        }
-        HXMobileJS.auto_login_process(intSystemId, fnCallbackWhenOffLine, false);
-        document.getElementById("hxProgressHintIcon").style.display = "none";
 
-    }, 200)
+    var fnCallbackWhenOffLine = function () {
+        document.getElementById("hxProgressHintIcon").style.display = "none";
+        document.getElementById("hint_area__connect_to_server_fail").style.visibility = "visible";
+        window.setTimeout(function () { document.getElementById("hint_area__connect_to_server_fail").style.visibility = "hidden"; }, 3000);
+    }
+
+    HXMobileJS.auto_login_process(intSystemId, fnCallbackWhenOffLine, false);
 }
 
 function get_line_element_of_trigger(objSrcElement) {
