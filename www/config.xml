@@ -7,7 +7,7 @@
 
     <access origin="*" />
 
-    <preference name="phonegap-version" value="3.3.0" />
+    <preference name="phonegap-version" value="3.4.0" />
     <preference name="permissions" value="no" />
     <preference name="orientation" value="default" />
     <preference name="target-device" value="universal" />
