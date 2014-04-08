@@ -1,8 +1,8 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-    <meta http-equiv="expires" content="Sunday 26 October 2008 01:00 GMT" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta http-equiv="expires" content="Sunday 26 October 2008 01:00 GMT" />
     <meta http-equiv="Pragma" content="no-cache" />
     <title>应用注册</title>
     <link href="../hxpublic_m/jquery.mobile-1.4.1.min.css" rel="Stylesheet" type="text/css" />
@@ -89,7 +89,12 @@ function visit_system(e)
     document.getElementById("hxProgressHintIcon").style.display = "";
     window.setTimeout(function()
     {
-        HXMobileJS.auto_login_process(intSystemId, "hint_area__connect_to_server_fail");
+        var fnCallbackWhenOffLine = function()
+        {
+            document.getElementById("hint_area__connect_to_server_fail").style.visibility = "visible";
+            window.setTimeout(function () { document.getElementById("hint_area__connect_to_server_fail").style.visibility = "hidden"; }, 3000);
+        }
+        HXMobileJS.auto_login_process(intSystemId, fnCallbackWhenOffLine, false);
         document.getElementById("hxProgressHintIcon").style.display = "none";
 
     }, 200)

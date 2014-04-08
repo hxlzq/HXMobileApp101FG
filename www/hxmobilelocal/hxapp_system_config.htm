@@ -22,7 +22,17 @@ $(function()
 
     $("#txtSystemName").val(objSystemSetting.system_name);
     $("#txtServerAddress").val(objSystemSetting.server_address);
-    $("#txtLoginServerAddress").val(objSystemSetting.login_server_address);
+    if (objSystemSetting.login_server_address != objSystemSetting.server_address)
+    {
+        // 登录服务器和服务器地址不同，此时显示高级设置
+        $("#txtLoginServerAddress").val(objSystemSetting.login_server_address);
+        document.getElementById("chkbxShowHideAdvanceSetting").checked = true;
+        document.getElementById("spnLoginServerAddressSettingArea").style.display = "";
+    }
+    else
+    {
+        // 如果登录服务器地址和服务器地址相同，则保持登录服务器地址输入框为空，确保用户修改服务器地址后，登录服务器地址自动使用该地址
+    }
 
     $("input#chkbxShowHideAdvanceSetting").bind("click", function (event) { document.getElementById("spnLoginServerAddressSettingArea").style.display = (event.target.checked ? "" : "none"); });
     $("button#btnRegisterAndLogin").bind("click", save_and_return);

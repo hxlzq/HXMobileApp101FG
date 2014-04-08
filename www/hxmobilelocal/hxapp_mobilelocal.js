@@ -102,49 +102,46 @@ HXMobileJS.get_registed_system_list = function()
     return $.parseJSON(strTemp);
 }
 
-HXMobileJS.auto_login_process = function(intSystemId, strHtmlIdForConnectionFailHintArea)
+HXMobileJS.auto_login_process = function (intSystemId, fnCallbackWhenOffLine, blnCallFromRootPath)
 {
     var objSystemSetting = HXMobileJS.get_registed_system_info(intSystemId);
     if (objSystemSetting == null) return;
 
+    var fnCallbackOnline = function()
+    {
+        var strUserCode = HXMobileJS._Internal.get_global_config("last_access_user_code");
+        var strAccessTokenCode = HXMobileJS._Internal.get_global_config("last_access_token_code");
+
+        if (strUserCode == null || strUserCode == "" || strAccessTokenCode == null || strAccessTokenCode == "") {
+            // 自动令牌登录信息不足，转入登录页面
+            window.open( (blnCallFromRootPath ? "" : "../") + "hxmobilelocal/hxapp_login.htm?system_id=" + intSystemId, "_self");
+            return;
+        }
+
+        var objResult = HXWebXmlService.LoginByTokenProcess(strUserCode, strAccessTokenCode);
+
+        if (objResult != null) {
+            var strNewAccessTokenCode = objResult.access_token_code;
+            var strNewCultureCode = objResult.culture_code;
+
+            HXMobileJS._Internal.set_global_config("last_access_user_code", strUserCode);
+            HXMobileJS._Internal.set_global_config("last_access_token_code", strNewAccessTokenCode);
+            HXMobileJS._Internal.set_global_config("chosen_language", strNewCultureCode);
+
+            HXMobileJS.navigate_to_system_homepage(objSystemSetting.server_address, strUserCode, strNewAccessTokenCode, ""
+                                , objSystemSetting.opened_in_container, blnCallFromRootPath);
+        }
+        else {
+            // 到登录页
+            window.open((blnCallFromRootPath ? "" : "../") + "hxmobilelocal/hxapp_login.htm?system_id=" + intSystemId, "_self");
+        }
+    }
+
+
     // 设置登录服务器地址，以便AJAX登录处理
     gstrWebRootPath = objSystemSetting.login_server_address;
 
-    // is online调用，如果网络未连接，显示网络未连接消息（消息3秒后自动隐藏）
-    if (!HXWebXmlService.IsOnline()) {
-        document.getElementById(strHtmlIdForConnectionFailHintArea).style.visibility = "visible";
-        window.setTimeout(function () { document.getElementById(strHtmlIdForConnectionFailHintArea).style.visibility = "hidden"; }, 3000);
-        return;
-    }
-
-    var strUserCode = HXMobileJS._Internal.get_global_config("last_access_user_code");
-    var strAccessTokenCode = HXMobileJS._Internal.get_global_config("last_access_token_code");
-
-    var blnCallFromRootPath = (document.location.pathname.indexOf("index.html") != -1); // 整个系统只有index.html位于根目录，其它都位于一级子目录下
-
-    if (strUserCode == null || strUserCode == "" || strAccessTokenCode == null || strAccessTokenCode == "") {
-        // 自动令牌登录信息不足，转入登录页面
-        window.open( (blnCallFromRootPath ? "" : "../") + "hxmobilelocal/hxapp_login.htm?system_id=" + intSystemId, "_self");
-        return;
-    }
-
-    var objResult = HXWebXmlService.LoginByTokenProcess(strUserCode, strAccessTokenCode);
-
-    if (objResult != null) {
-        var strNewAccessTokenCode = objResult.access_token_code;
-        var strNewCultureCode = objResult.culture_code;
-
-        HXMobileJS._Internal.set_global_config("last_access_user_code", strUserCode);
-        HXMobileJS._Internal.set_global_config("last_access_token_code", strNewAccessTokenCode);
-        HXMobileJS._Internal.set_global_config("chosen_language", strNewCultureCode);
-
-        HXMobileJS.navigate_to_system_homepage(objSystemSetting.server_address, strUserCode, strNewAccessTokenCode, ""
-                            , objSystemSetting.opened_in_container, blnCallFromRootPath);
-    }
-    else {
-        // 到登录页
-        window.open( (blnCallFromRootPath ? "" : "../") + "hxmobilelocal/hxapp_login.htm?system_id=" + intSystemId, "_self");
-    }
+    HXWebXmlService.IsOnline(fnCallbackOnline, fnCallbackWhenOffLine);
 }
 
 HXMobileJS.navigate_to_system_homepage = function (strServerAddress, strUserCode, strAccessTokenCode, strTargetHomePage, blnOpenInContainer, blnCallFromRootPath)

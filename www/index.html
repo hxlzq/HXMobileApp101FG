@@ -24,13 +24,13 @@ $(function()
     mintChosenSystemId = HXMobileJS.get_current_chosen_system_id();
     if (mintChosenSystemId == null)
     {
-        document.getElementById("hint_area__start_register_system").style.visibility = "visible";
-        document.getElementById("hint_area__auto_login_processing").style.visibility = "hidden";
+        document.getElementById("hint_area__start_register_system").style.display = "";
+        document.getElementById("hint_area__auto_login_processing").style.display = "none";
     }
     else
     {
-        document.getElementById("hint_area__start_register_system").style.visibility = "hidden";
-        document.getElementById("hint_area__auto_login_processing").style.visibility = "visible";
+        document.getElementById("hint_area__start_register_system").style.display = "none";
+        document.getElementById("hint_area__auto_login_processing").style.display = "";
 
         window.setTimeout(begin_auto_login_process, 2000);
     }
@@ -46,7 +46,11 @@ function begin_auto_login_process()
 {
     if (mblnAllowAutoLoginDirectly) {
         // 尝试自动登录
-        HXMobileJS.auto_login_process(mintChosenSystemId, "hint_area__connect_to_server_fail");
+        var fnCallbackWhenOffLine = function () {
+            document.getElementById("hint_area__auto_login_processing").style.display = "none";
+            document.getElementById("hint_area__connect_to_server_fail").style.display = "";
+        }
+        HXMobileJS.auto_login_process(mintChosenSystemId, fnCallbackWhenOffLine, true);
         return;
     }
 
@@ -61,20 +65,19 @@ function begin_auto_login_process()
          <h4>恒信企业移动应用入口</h4>
       </div>
        <div data-role="content" style="text-align:center;">
-           <h3 id="hint_area__start_register_system" style="visibility: hidden;">
+           <h3 id="hint_area__start_register_system" style="display: none;">
                还没有配置任何应用。<a href="hxmobilelocal/hxapp_system_register.htm?direct_login=1" rel="external" data-transition="flip" style="cursor:pointer;text-decoration:none;">开始配置</a>
            </h3>
-           <h3 id="hint_area__auto_login_processing" style="visibility: hidden;">
-               应用连接中... <img src="hximages_v6/hxpub_waiting_hint_sun_16.gif" />
+           <h3 id="hint_area__auto_login_processing" style="display: none;">
+               <img src="hximages_v6/hxpub_waiting_hint_sun_16.gif" style="margin-right:4px;" />应用连接中... 
                <br /><br />
                <a id="lnkCancelAutoLogin" data-role="none" style="cursor:pointer;text-decoration:none;" onclick="cancel_auto_login_process()">取消自动连接</a>
            </h3>
-
-       </div>
-       <div data-role="none" id="hint_area__connect_to_server_fail"
-            style="position: absolute; visibility:hidden; left: 60px; right: 60px; height: 1.6em; bottom: 3.8em; padding: 2px 2px 2px 2px;
-                                    background-color: #808080; color: white; font-size: small; text-align: center;">
-           <span id="lblSystemNameForConnectionFailHint" style="font-weight:bold;">系统</span>网络连接不可用，请稍后重试。
+           <h3 id="hint_area__connect_to_server_fail" style="display: none;font-weight:normal">
+               网络/服务器连接不可用，请稍后重试。
+               <br /><br />
+               你也可以<a href="hxmobilelocal/hxapp_system_list.htm" rel="external" data-transition="flip" style="cursor:pointer;text-decoration:none;">更改应用设置/切换应用</a>。
+           </h3>
        </div>
        <div data-role="footer" data-position="fixed">
            <h4>&copy;&nbsp;2000-2014 恒信软件</h4>
