@@ -22,14 +22,17 @@ $(function()
 
     var strSystemFullUrl = objUrlParameters["system_full_url"];
     window.frames["ifrmSystemContainer"].document.location.href = strSystemFullUrl;
+
+    window.addEventListener("message", messageHandler, true); // 注册 html5 通信事件接收响应函数
 });
 
-function MobileLocalDeviceAccessRequest(strOrginalRemotePageUrl, strDeviceRequestType)
+function messageHandler(e)
 {
-    alert("strOrginalRemotePageUrl=" + strOrginalRemotePageUrl + ",strDeviceRequestType=" + strDeviceRequestType);
-
-    return "somedatafromlocal";
+    alert("e.origin =" + e.origin + ", e.data=" + e.data);
+    window.frames["ifrmSystemContainer"].contentWindow.postMessage("Hello World", "192.168.1.7");
 }
+
+
    </script>
 </head>
 <body style="padding:0;margin:0;width:100%;height:100%;overflow:hidden;">
