@@ -29,9 +29,8 @@ $(function()
 function messageHandler(e)
 {
     alert("e.origin =" + e.origin + ", e.data=" + e.data);
-    window.frames["ifrmSystemContainer"].contentWindow.postMessage("Hello World", "192.168.1.7");
+    window.frames["ifrmSystemContainer"].contentWindow.postMessage("Hello World", "*");
 }
-
 
    </script>
 </head>
