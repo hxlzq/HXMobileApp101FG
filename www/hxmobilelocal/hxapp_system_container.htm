@@ -23,6 +23,13 @@ $(function()
     var strSystemFullUrl = objUrlParameters["system_full_url"];
     window.frames["ifrmSystemContainer"].document.location.href = strSystemFullUrl;
 });
+
+function MobileLocalDeviceAccessRequest(strOrginalRemotePageUrl, strDeviceRequestType)
+{
+    alert("strOrginalRemotePageUrl=" + strOrginalRemotePageUrl + ",strDeviceRequestType=" + strDeviceRequestType);
+
+    return "somedatafromlocal";
+}
    </script>
 </head>
 <body style="padding:0;margin:0;width:100%;height:100%;overflow:hidden;">

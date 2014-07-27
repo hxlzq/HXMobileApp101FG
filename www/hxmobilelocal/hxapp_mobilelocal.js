@@ -147,7 +147,8 @@ HXMobileJS.auto_login_process = function (intSystemId, fnCallbackWhenOffLine, bl
 
 HXMobileJS.navigate_to_system_homepage = function (strServerAddress, strUserCode, strAccessTokenCode, strTargetHomePage, blnOpenInContainer, blnCallFromRootPath)
 {
-    blnOpenInContainer = false; // 经测试，phonegap下本地页面嵌套远程页面时对远程页面的设备调用问题较多，所以此处总是使用直接远程页面访问机制
+    // 测试：iOS下禁止远程页面通过phoneGap接口访问本地设备，所以只能考虑通过嵌套网页通信的模式进行本地设备交互交流
+    blnOpenInContainer = true; 
 
     if ( blnOpenInContainer == true)
     {
